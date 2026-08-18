@@ -28,12 +28,12 @@ def action(family="policies", resource_id="review_policy", offers=None):
 
 class ProviderTests(unittest.TestCase):
     def provider(self, client=None):
-        subject = OmniSeedProvider({"operationEndpoint": "https://omniseed.example"}, client or FakeClient())
+        subject = OmniSeedProvider({"operationEndpoint": "https://omniseed.example", "desiredRevision": "a" * 40}, client or FakeClient())
         subject.company_id = "omniseed_ecosystem"
         return subject
 
     def test_manifest_and_runtime_consolidate_one_omniseed_provider(self):
-        result = self.provider().initialize({"protocolVersion": PROTOCOL, "configuration": {"operationEndpoint": "https://omniseed.example"}, "context": {"companyId": "omniseed_ecosystem"}})
+        result = self.provider().initialize({"protocolVersion": PROTOCOL, "configuration": {"operationEndpoint": "https://omniseed.example", "desiredRevision": "a" * 40}, "context": {"companyId": "omniseed_ecosystem"}})
         manifest = json.loads(Path("provider-package.json").read_text())
         self.assertEqual(result["provider"]["id"], "omniseed")
         self.assertEqual(result["primitiveFamilies"], ["skills", "policies", "observations"])
@@ -65,6 +65,9 @@ class ProviderTests(unittest.TestCase):
         unhealthy = self.provider(FakeClient(company="other")).status()
         self.assertTrue(unhealthy["connected"])
         self.assertFalse(unhealthy["healthy"])
+        stale = self.provider()
+        stale.configuration["desiredRevision"] = "b" * 40
+        self.assertFalse(stale.status()["healthy"])
 
     def test_activity_and_projection_operations_are_read_only(self):
         provider = self.provider()

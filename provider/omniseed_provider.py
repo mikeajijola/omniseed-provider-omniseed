@@ -93,6 +93,10 @@ class OmniSeedProvider:
     def projection(self):
         return self.client.get(self.projection_path)
 
+    @staticmethod
+    def projection_revision(projection):
+        return (projection.get("instance") or {}).get("desiredRevision") or projection.get("desiredRevision")
+
     def status(self):
         configured = bool(self.configuration.get("operationEndpoint"))
         connected = healthy = False
@@ -101,7 +105,7 @@ class OmniSeedProvider:
                 projection = self.projection()
                 actual = projection.get("companyId") or (projection.get("company") or {}).get("id")
                 connected = True
-                healthy = actual == self.company_id
+                healthy = actual == self.company_id and self.projection_revision(projection) == self.configuration.get("desiredRevision")
             except ProviderError:
                 pass
         return {"implementation_available": True, "configured": configured, "connected": connected, "healthy": healthy}
@@ -156,7 +160,8 @@ class OmniSeedProvider:
         actual_company = projection.get("companyId") or (projection.get("company") or {}).get("id")
         match = next((item for item in self._resources(projection) if item.get("id") == attributes.get("resourceId") and item.get("family") == attributes.get("family")), None)
         checked = now()
-        healthy = actual_company == self.company_id and match is not None
+        revision = self.projection_revision(projection)
+        healthy = actual_company == self.company_id and revision == self.configuration.get("desiredRevision") and match is not None
         evidence = {
             "type": "omniseed_projection_evidence",
             "source": PROVIDER_ID,
@@ -164,7 +169,8 @@ class OmniSeedProvider:
             "family": attributes.get("family"),
             "resourceId": attributes.get("resourceId"),
             "resourcePresent": match is not None,
-            "desiredRevision": (projection.get("instance") or {}).get("desiredRevision") or projection.get("desiredRevision"),
+            "desiredRevision": revision,
+            "revisionMatches": revision == self.configuration.get("desiredRevision"),
             "observedAt": checked
         }
         return {"status": "healthy" if healthy else "degraded", "checkedAt": checked, "providerResourceId": resource.get("providerResourceId"), "evidence": [evidence], "snapshot": evidence}
