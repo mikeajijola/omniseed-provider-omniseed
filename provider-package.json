@@ -1,9 +1,15 @@
 {
   "manifestVersion": "1.0",
   "id": "omniseed",
+  "organisation": "OmniSeed",
   "version": "0.1.0-alpha.1",
   "engineCompatibility": "omniseed.provider.protocol/1.0",
   "primitiveFamilies": ["skills", "policies", "observations"],
+  "implementations": [
+    { "family": "skills", "products": ["Engine", "Operation Registry", "Company Projection"] },
+    { "family": "policies", "products": ["Engine", "Governance Evaluation"] },
+    { "family": "observations", "products": ["Engine", "Company Projection", "Activity"] }
+  ],
   "operations": ["engine.projection.inspect", "engine.activity.inspect"],
   "configurationSchema": "./provider-configuration.schema.json",
   "observationTypes": ["omniseed_primitive_binding_state"],
