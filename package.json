@@ -1,0 +1,11 @@
+{
+  "name": "@omniseed/provider-omniseed",
+  "version": "0.1.0-alpha.1",
+  "description": "OmniSeed Provider for Engine-native skills, policies, and observations",
+  "private": true,
+  "scripts": {
+    "test": "python3 -m unittest discover -s test -p 'test_*.py' -v"
+  },
+  "engines": { "node": ">=22" },
+  "license": "Apache-2.0"
+}

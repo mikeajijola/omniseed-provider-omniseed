@@ -1,0 +1,12 @@
+{
+  "manifestVersion": "1.0",
+  "id": "omniseed",
+  "version": "0.1.0-alpha.1",
+  "engineCompatibility": "omniseed.provider.protocol/1.0",
+  "primitiveFamilies": ["skills", "policies", "observations"],
+  "operations": ["engine.projection.inspect", "engine.activity.inspect"],
+  "configurationSchema": "./provider-configuration.schema.json",
+  "observationTypes": ["omniseed_primitive_binding_state"],
+  "evidenceTypes": ["omniseed_projection_evidence"],
+  "permissions": ["company.read", "capability.read", "activity.read"]
+}
