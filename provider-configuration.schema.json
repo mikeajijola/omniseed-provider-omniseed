@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://omniseed.org/providers/omniseed/configuration-v1.json",
+  "title": "OmniSeed Provider process configuration",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["operationEndpoint", "desiredRevision"],
+  "properties": {
+    "operationEndpoint": { "type": "string", "format": "uri" },
+    "desiredRevision": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+    "credentialEnvironment": { "type": "string", "pattern": "^[A-Z][A-Z0-9_]*$", "default": "OMNISEED_PROVIDER_OPERATION_TOKEN" },
+    "companyProjectionPath": { "type": "string", "pattern": "^/", "default": "/api/company" },
+    "timeoutSeconds": { "type": "integer", "minimum": 1, "maximum": 60, "default": 10 }
+  }
+}
